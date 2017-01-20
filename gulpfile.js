@@ -25,11 +25,15 @@ var uglify        = require('gulp-uglify');
 // Process SCSS style files.
 gulp.task('sass',function(){
   var mapsDir = './';
-  var customSrcs = [  vars.scss.src+'custom/**/*.scss',
+  var customSrcs = [  vars.scss.src+'custom/vars.scss',
                       vars.scss.src+'custom/mixins/**/*.scss',
-                      vars.scss.src+'custom/common/general.scss',
-                      vars.scss.src+'custom/common/reset.scss',
-                      vars.scss.src+'custom/common/normalize.scss',
+                      (function(useReset){
+                        return (useReset) ? vars.scss.src+'custom/common/reset.scss' : '';
+                      })(vars.scss.config.useReset),
+                      (function(useNormalize){
+                        return (useNormalize) ? vars.scss.src+'custom/common/normalize.scss' : ''
+                      })(vars.scss.config.useNormalize),
+                      vars.scss.src+'custom/common/global.scss',
                       vars.scss.src+'custom/modules/**/*.scss',
                       vars.scss.src+'custom/_shame.scss'
                    ];
@@ -55,6 +59,11 @@ gulp.task('sass',function(){
   .pipe(livereload());
 });
 
+// Process JS
+gulp.task('js',function(){
+
+});
+
 // Process assets
 gulp.task('assets',function(){
   gulp.src(vars.assets.src + '**/*.*')
@@ -63,7 +72,7 @@ gulp.task('assets',function(){
 
 // Task: gulp watch
 gulp.task('watch', function () {
-  gulp.watch( vars.source.folder + vars.source.sass.folder + '**/*.scss', ['sass-min']);
-  gulp.watch( vars.source.folder + vars.source.js.folder + '**/*.js',   ['js-min']);
-  gulp.watch( vars.source.folder + vars.source.assets.folder + '**/*.*',   ['assets-cp']);
+  gulp.watch( vars.source.folder + vars.source.sass.folder + '**/*.scss', ['sass']);
+  gulp.watch( vars.source.folder + vars.source.js.folder + '**/*.js',   ['js']);
+  gulp.watch( vars.source.folder + vars.source.assets.folder + '**/*.*',   ['assets']);
 })

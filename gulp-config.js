@@ -19,7 +19,9 @@ module.exports = {
         cascade: false,
         flexbox: 'no-2009'
       },
-      minify: true
+      minify: true,
+      useReset: true,
+      useNormalize: true
     },
   },
   js: {
