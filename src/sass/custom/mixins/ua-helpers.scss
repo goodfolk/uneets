@@ -1,0 +1,21 @@
+// ***************************************************************************
+// User agent mixins
+// http://rog.ie/blog/html5-boilerplate-addon
+// ***************************************************************************
+@mixin for-ie9 {
+  html[data-useragent*='MSIE 9.0'] & {
+    @content;
+  }
+}
+
+@mixin for-ie10 {
+  html[data-useragent*='MSIE 10.0'] & {
+    @content;
+  }
+}
+
+@mixin for-ie11 {
+  html[data-useragent*='rv:11.0'] & {
+    @content;
+  }
+}
