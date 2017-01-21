@@ -1,3 +1,8 @@
 $(document).ready(function () {
-  window.alert('jQuery works!')
+  const initializeUneet = (e) => {
+
+  }
+  $('u_header').each((i,e)=>{
+    initializeUneet(e);
+  });
 })

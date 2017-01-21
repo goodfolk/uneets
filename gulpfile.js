@@ -18,6 +18,10 @@ var connect = require('gulp-connect')
 var gutil = require('gulp-util')
 var exec = require('child_process').exec
 
+// uneet related packages
+var fs = require('fs');
+var argv = require('yargs').argv;
+
 // sass related packages
 var sass = require('gulp-sass')
 var autoprefixer = (vars.scss.config.autoprefix)
@@ -46,7 +50,6 @@ var uglify = (vars.js.config.minify)
     : doNothing
 
 // Task: hbs -- process html / handlebars
-
 gulp.task('hbs', function () {
   var hbsSources = [ vars.hbs.src + '*.html' ]
 
@@ -147,7 +150,7 @@ gulp.task('js', function () {
 })
 
 // Process assets
-gulp.task('assets', function () {
+const watchTask = gulp.task('assets', function () {
   var assetSrcs = [ vars.assets.src + '**/*.*' ]
 
   allSources.assets = assetSrcs
@@ -172,10 +175,33 @@ gulp.task('serve', function () {
   })
 })
 
+// Task: uneet -- newUneet new uneet files
+const MAKE_NAME = 'make'
+gulp.task('uneets',function(){
+  var force = argv.f
+  var newUneet = { scss: {}, js: {}}
+  // scss
+  newUneet.scss.name = argv[MAKE_NAME] + '.scss'
+  newUneet.scss.dest = vars.scss.uneetsFolder + '/'
+  newUneet.scss.file = newUneet.scss.dest + newUneet.scss.name
+  newUneet.scss.content = '.u_' + argv[MAKE_NAME] + ' {\n' + '}'
+  if ((!vars.scss.ignore) && (( !fs.existsSync(newUneet.scss.file) ) || ( force ))) {
+    fs.writeFile(newUneet.scss.file, newUneet.scss.content, null);
+  }
+  // js
+  newUneet.js.name = argv[MAKE_NAME] + '.js'
+  newUneet.js.dest = vars.js.uneetsFolder + '/'
+  newUneet.js.file = newUneet.js.dest + newUneet.js.name
+  newUneet.js.content = '//.u_' + argv[MAKE_NAME] + '\n'
+  if ((!vars.js.ignore) && (( !fs.existsSync(newUneet.js.file) ) || ( force ))) {
+    fs.writeFile(newUneet.js.file, newUneet.js.content, null);
+  }
+});
+
 // Process EVEYRHTING and then watch.
 var tasks = []
 if (!vars.hbs.ignore) { tasks.push('hbs') }
-if (!vars.sass.ignore) { tasks.push('sass') }
+if (!vars.scss.ignore) { tasks.push('sass') }
 if (!vars.js.ignore) { tasks.push('js') }
 if (!vars.assets.ignore) { tasks.push('assets') }
 if (vars.server.useServer) { tasks.push('serve') }

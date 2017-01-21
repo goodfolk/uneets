@@ -31,6 +31,7 @@ var vars = {
   scss: {
     ignore: false, // completely turns off sass processing for this project
     src: baseSrcFolder + 'sass/',                // folder where CSS is
+    uneetsFolder: baseSrcFolder + 'sass/custom/uneets',
     outputFolder: baseDistFolder + 'css/',       // what folder does CSS and maps go?
     outputFilename: 'styles',         // do not include the extension
     config: {
@@ -50,6 +51,7 @@ var vars = {
   js: {
     ignore: false, // completely turns off js processing for this project
     src: baseSrcFolder + 'js/',
+    uneetsFolder: baseSrcFolder + 'js/custom/uneets',
     outputFolder: baseDistFolder + 'js/',
     outputFilename: 'all',        // do not include the extension
     config: {
