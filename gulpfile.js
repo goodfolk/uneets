@@ -6,6 +6,7 @@
 
 // config
 var vars = require('./gulp-config.js')
+var allSources = {}
 
 // general packages
 var gulp = require('gulp')
@@ -14,6 +15,7 @@ var sourcemaps = require('gulp-sourcemaps')
 var concat = require('gulp-concat')
 var rename = require('gulp-rename')
 var livereload = require('gulp-livereload')
+var gutil = require('gulp-util')
 var exec = require('child_process').exec
 
 // sass related packages
@@ -43,9 +45,20 @@ babel.babelPreset = vars.js.config.babelConfig
 // process html / handlebars
 
 gulp.task('hbs', function () {
-  return gulp.src(vars.hbs.src + '*.html')
-    .pipe(handlebars({}, vars.hbs.config.hbsOpts))
+  var hbsSources = [ vars.hbs.src + '*.html' ]
+
+  allSources.hbs = hbsSources
+
+  var hbsStream = gulp.src(hbsSources)
+    .pipe(handlebars({}, vars.hbs.config.hbsOpts)
+      .on('error',function(e){
+        console.warn('Error in handlebars processing')
+        gutil.log(e)
+        hbsStream.end()
+      }))
     .pipe(gulp.dest(vars.hbs.outputFolder))
+
+  return hbsStream
 })
 
 // Process SCSS style files.
@@ -66,12 +79,16 @@ gulp.task('sass', function () {
     })(vars.scss.config.useNormalize),
     vars.scss.src + 'custom/common/global.scss',
     vars.scss.src + 'custom/modules/**/*.scss',
-    vars.scss.src + 'custom/_shame.scss'
+    vars.scss.src + 'custom/shame.scss'
   ]
   var libSrcs = [vars.scss.src + 'libs/**/*.css']
   var outputFile = vars.scss.outputFilename + '.css'
   var libsOutputFile = 'libs.css'
   var destDir = vars.scss.outputFolder
+
+  allSources.sass = [];
+  allSources.sass = allSources.sass.concat(customSrcs, libSrcs)
+
   console.log('Writing ' + destDir + libsOutputFile)
   gulp.src(libSrcs)
       .pipe(sourcemaps.init())
@@ -101,7 +118,8 @@ gulp.task('js', function () {
   var libsSrc = [vars.js.src + 'libs/**/*.js']
   var libsOutputFile = 'libs.js'
 
-  var lintResult = gulp.src(customSrc)
+  allSources.js = [];
+  allSources.js = allSources.js.concat(customSrc,libsSrc)
 
   exec('standard --fix', function (err, stdout, stderr) {
     console.log(stdout)
@@ -123,12 +141,21 @@ gulp.task('js', function () {
 
 // Process assets
 gulp.task('assets', function () {
-  gulp.src(vars.assets.src + '**/*.*').pipe(gulp.dest(vars.assets.output))
+  var assetSrcs = [ vars.assets.src + '**/*.*' ]
+
+  allSources.assets = assetSrcs
+
+  gulp.src(assetSrcs).pipe(gulp.dest(vars.assets.output))
 })
 
 // Task: gulp watch
 gulp.task('watch', function () {
-  gulp.watch(vars.source.folder + vars.source.sass.folder + '**/*.scss', ['sass'])
-  gulp.watch(vars.source.folder + vars.source.js.folder + '**/*.js', ['js'])
-  gulp.watch(vars.source.folder + vars.source.assets.folder + '**/*.*', ['assets'])
+  console.log(allSources.sass)
+  gulp.watch(allSources.sass, ['sass'])
+  gulp.watch(allSources.hbs, ['hbs'])
+  gulp.watch(allSources.js, ['js'])
+  gulp.watch(allSources.assets, ['assets'])
 })
+
+// Process EVEYRHTING and then watch.
+gulp.task('default', ['hbs', 'sass', 'js', 'assets', 'watch']);
