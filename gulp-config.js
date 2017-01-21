@@ -16,18 +16,20 @@ var vars = {
     serverPort: 7777
   },
   hbs: {
+    ignore: false, // completely turns off handlebars processing for this project
     src: baseSrcFolder + 'html/',
     outputFolder: baseDistFolder,
     config: {
       hbsOpts: {
         ignorePartials: false,
-        partials : {},
-        batch : [baseSrcFolder +  'html/partials'],
-        helpers : {}
+        partials: {},
+        batch: [baseSrcFolder + 'html/partials'],
+        helpers: {}
       }
     }
   },
   scss: {
+    ignore: false, // completely turns off sass processing for this project
     src: baseSrcFolder + 'sass/',                // folder where CSS is
     outputFolder: baseDistFolder + 'css/',       // what folder does CSS and maps go?
     outputFilename: 'styles',         // do not include the extension
@@ -46,6 +48,7 @@ var vars = {
     }
   },
   js: {
+    ignore: false, // completely turns off js processing for this project
     src: baseSrcFolder + 'js/',
     outputFolder: baseDistFolder + 'js/',
     outputFilename: 'all',        // do not include the extension
@@ -63,6 +66,7 @@ var vars = {
     }
   },
   assets: {
+    ignore: false, // completely turns off asset copying for this project
     src: baseSrcFolder + 'assets/',              // where are the assets?
     output: baseDistFolder + 'assets/'           // output folder
   }

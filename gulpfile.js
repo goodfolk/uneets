@@ -14,7 +14,7 @@ var doNothing = require('gulp-empty')
 var sourcemaps = require('gulp-sourcemaps')
 var concat = require('gulp-concat')
 var rename = require('gulp-rename')
-var connect = require('gulp-connect');
+var connect = require('gulp-connect')
 var gutil = require('gulp-util')
 var exec = require('child_process').exec
 
@@ -54,7 +54,7 @@ gulp.task('hbs', function () {
 
   var hbsStream = gulp.src(hbsSources)
     .pipe(handlebars({}, vars.hbs.config.hbsOpts)
-      .on('error',function(e){
+      .on('error', function (e) {
         console.warn('Error in handlebars processing')
         gutil.log(e)
         hbsStream.end()
@@ -89,7 +89,7 @@ gulp.task('sass', function () {
   var libsOutputFile = 'libs.css'
   var destDir = vars.scss.outputFolder
 
-  allSources.sass = [];
+  allSources.sass = []
   allSources.sass = allSources.sass.concat(customSrcs, libSrcs)
 
   console.log('Writing ' + destDir + libsOutputFile)
@@ -120,8 +120,8 @@ gulp.task('js', function () {
   var libsSrc = [vars.js.src + 'libs/**/*.js']
   var libsOutputFile = 'libs.js'
 
-  allSources.js = [];
-  allSources.js = allSources.js.concat(customSrc,libsSrc)
+  allSources.js = []
+  allSources.js = allSources.js.concat(customSrc, libsSrc)
 
   exec('standard --fix', function (err, stdout, stderr) {
     console.log(stdout)
@@ -134,10 +134,10 @@ gulp.task('js', function () {
   return gulp.src(customSrc)
       .pipe(standard())
       .pipe(sourcemaps.init())
-      .pipe(babel(vars.js.config.babelConfig).on('error',function(e){
+      .pipe(babel(vars.js.config.babelConfig).on('error', function (e) {
         gutil.log(e)
       }))
-      .pipe(concat(outputFile).on('error',function(e){
+      .pipe(concat(outputFile).on('error', function (e) {
         gutil.log(e)
       }))
       .pipe(uglify())
@@ -164,15 +164,20 @@ gulp.task('watch', function () {
 })
 
 // Task: Serve (serves the dist folder)
-gulp.task('serve', function() {
+gulp.task('serve', function () {
   connect.server({
     root: vars.baseDist,
     livereload: vars.server.useServer,
     port: vars.server.serverPort
-  });
-});
+  })
+})
 
 // Process EVEYRHTING and then watch.
-var tasks = [ 'hbs', 'sass', 'js', 'assets', 'watch' ]
+var tasks = []
+if (!vars.hbs.ignore) { tasks.push('hbs') }
+if (!vars.sass.ignore) { tasks.push('sass') }
+if (!vars.js.ignore) { tasks.push('js') }
+if (!vars.assets.ignore) { tasks.push('assets') }
 if (vars.server.useServer) { tasks.push('serve') }
-gulp.task('default', tasks);
+tasks.push('watch')
+gulp.task('default', tasks)
