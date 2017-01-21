@@ -14,7 +14,7 @@ var doNothing = require('gulp-empty')
 var sourcemaps = require('gulp-sourcemaps')
 var concat = require('gulp-concat')
 var rename = require('gulp-rename')
-var livereload = require('gulp-livereload')
+var connect = require('gulp-connect');
 var gutil = require('gulp-util')
 var exec = require('child_process').exec
 
@@ -35,14 +35,17 @@ var handlebars = require('gulp-compile-handlebars')
 
 // js related packages
 var standard = (vars.js.config.useStandard)
-  ? require('gulp-standard')
-  : doNothing
+    ? require('gulp-standard')
+    : doNothing
 var babel = (vars.js.config.useBabel)
     ? require('gulp-babel')
     : doNothing
 babel.babelPreset = vars.js.config.babelConfig
+var uglify = (vars.js.config.minify)
+    ? require('gulp-uglify')
+    : doNothing
 
-// process html / handlebars
+// Task: hbs -- process html / handlebars
 
 gulp.task('hbs', function () {
   var hbsSources = [ vars.hbs.src + '*.html' ]
@@ -61,7 +64,7 @@ gulp.task('hbs', function () {
   return hbsStream
 })
 
-// Process SCSS style files.
+// Task: sass -- Process SCSS style files.
 gulp.task('sass', function () {
   var mapsDir = './'
   var customSrcs = [
@@ -106,14 +109,13 @@ gulp.task('sass', function () {
       .pipe(renameSass({suffix: '.min'}))
       .pipe(sourcemaps.write(mapsDir))
       .pipe(gulp.dest(destDir))
-      .pipe(livereload())
 })
 
 // Process JS
 gulp.task('js', function () {
-  var mapsDir = './'
+  var mapsDir = '.'
   var customSrc = [vars.js.src + 'custom/**/*.js']
-  var outputFile = vars.js.outputFilename + '.js'
+  var outputFile = vars.js.outputFilename + '.min.js'
   var destDir = vars.js.outputFolder
   var libsSrc = [vars.js.src + 'libs/**/*.js']
   var libsOutputFile = 'libs.js'
@@ -131,12 +133,17 @@ gulp.task('js', function () {
       .pipe(gulp.dest(destDir))
   return gulp.src(customSrc)
       .pipe(standard())
-      .pipe(standard.reporter('default', vars.js.config.standardOpts))
       .pipe(sourcemaps.init())
-      .pipe(babel(vars.js.config.babelConfig))
-      .pipe(concat(outputFile))
+      .pipe(babel(vars.js.config.babelConfig).on('error',function(e){
+        gutil.log(e)
+      }))
+      .pipe(concat(outputFile).on('error',function(e){
+        gutil.log(e)
+      }))
+      .pipe(uglify())
       .pipe(sourcemaps.write(mapsDir))
       .pipe(gulp.dest(destDir))
+      .pipe(standard.reporter('default', vars.js.config.standardOpts))
 })
 
 // Process assets
@@ -150,12 +157,22 @@ gulp.task('assets', function () {
 
 // Task: gulp watch
 gulp.task('watch', function () {
-  console.log(allSources.sass)
   gulp.watch(allSources.sass, ['sass'])
   gulp.watch(allSources.hbs, ['hbs'])
   gulp.watch(allSources.js, ['js'])
   gulp.watch(allSources.assets, ['assets'])
 })
 
+// Task: Serve (serves the dist folder)
+gulp.task('serve', function() {
+  connect.server({
+    root: vars.baseDist,
+    livereload: vars.server.useServer,
+    port: vars.server.serverPort
+  });
+});
+
 // Process EVEYRHTING and then watch.
-gulp.task('default', ['hbs', 'sass', 'js', 'assets', 'watch']);
+var tasks = [ 'hbs', 'sass', 'js', 'assets', 'watch' ]
+if (vars.server.useServer) { tasks.push('serve') }
+gulp.task('default', tasks);

@@ -6,22 +6,30 @@
 
 // Variables
 // Edit these to customize your project.
-module.exports = {
+var baseDistFolder = './dist/'
+var baseSrcFolder = './src/'
+var vars = {
+  baseDist: baseDistFolder,
+  baseSrc: baseSrcFolder,
+  server: {
+    useServer: true,
+    serverPort: 7777
+  },
   hbs: {
-    src: 'src/html/',
-    outputFolder: './dist/',
+    src: baseSrcFolder + 'html/',
+    outputFolder: baseDistFolder,
     config: {
       hbsOpts: {
         ignorePartials: false,
         partials : {},
-        batch : ['./src/html/partials'],
+        batch : [baseSrcFolder +  'html/partials'],
         helpers : {}
       }
     }
   },
   scss: {
-    src: 'src/sass/',                // folder where CSS is
-    outputFolder: './dist/css/',       // what folder does CSS and maps go?
+    src: baseSrcFolder + 'sass/',                // folder where CSS is
+    outputFolder: baseDistFolder + 'css/',       // what folder does CSS and maps go?
     outputFilename: 'styles',         // do not include the extension
     config: {
       autoprefixerSettings: {
@@ -38,8 +46,8 @@ module.exports = {
     }
   },
   js: {
-    src: 'src/js/',
-    outputFolder: './dist/js/',
+    src: baseSrcFolder + 'js/',
+    outputFolder: baseDistFolder + 'js/',
     outputFilename: 'all',        // do not include the extension
     config: {
       useBabel: true,
@@ -50,11 +58,14 @@ module.exports = {
       standardOpts: {
         breakOnError: false,
         quiet: false
-      }
+      },
+      minify: true
     }
   },
   assets: {
-    src: 'src/assets/',              // where are the assets?
-    output: './dist/assets/'           // output folder
+    src: baseSrcFolder + 'assets/',              // where are the assets?
+    output: baseDistFolder + 'assets/'           // output folder
   }
 }
+
+module.exports = vars
