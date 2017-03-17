@@ -12,11 +12,11 @@ var vars = {
   baseDist: baseDistFolder,
   baseSrc: baseSrcFolder,
   server: {
-    useServer: true,
+    useServer: false,
     serverPort: 7777
   },
   hbs: {
-    ignore: false, // completely turns off handlebars processing for this project
+    ignore: true, // completely turns off handlebars processing for this project
     src: baseSrcFolder + 'html/',
     outputFolder: baseDistFolder,
     config: {
@@ -27,6 +27,12 @@ var vars = {
         helpers: {}
       }
     }
+  },
+  php: {
+    ignore: false,
+    src: baseSrcFolder + 'php-partials/',
+    uneetsFolder: baseSrcFolder + 'php-partials/',
+    outputFolder: baseDistFolder + 'php-partials/'
   },
   scss: {
     ignore: false, // completely turns off sass processing for this project

@@ -184,7 +184,10 @@ gulp.task('serve', function () {
   })
 })
 
-// Task: uneet -- newUneet new uneet files
+// Task
+
+// Task: uneets -- newUneet new uneet files
+// usage: "gulp uneets --make unitName"
 const MAKE_NAME = 'make'
 gulp.task('uneets',function(){
   var force = argv.f
@@ -209,10 +212,26 @@ gulp.task('uneets',function(){
 
 // Process EVEYRHTING and then watch.
 var tasks = []
-if (!vars.hbs.ignore) { tasks.push('hbs') }
-if (!vars.scss.ignore) { tasks.push('sass') }
-if (!vars.js.ignore) { tasks.push('js') }
-if (!vars.assets.ignore) { tasks.push('assets') }
-if (vars.server.useServer) { tasks.push('serve') }
+var noWatch = []
+if (!vars.hbs.ignore) {
+  tasks.push('hbs')
+  noWatch.push('hbs')
+}
+if (!vars.scss.ignore) {
+  tasks.push('sass')
+  noWatch.push('hbs')
+}
+if (!vars.js.ignore) {
+  tasks.push('js')
+  noWatch.push('hbs')
+}
+if (!vars.assets.ignore) {
+  tasks.push('assets')
+  noWatch.push('assets')
+}
+if (vars.server.useServer) {
+  tasks.push('serve')
+}
 tasks.push('watch')
 gulp.task('default', tasks)
+gulp.task('dist', noWatch)
