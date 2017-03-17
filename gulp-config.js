@@ -31,7 +31,7 @@ var vars = {
   php: {
     ignore: false,
     src: baseSrcFolder + 'php-partials/',
-    uneetsFolder: baseSrcFolder + 'php-partials/',
+    uneetsFolder: baseSrcFolder + 'php-partials',
     outputFolder: baseDistFolder + 'php-partials/'
   },
   scss: {

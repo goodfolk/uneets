@@ -164,6 +164,15 @@ gulp.task('assets', function () {
   gulp.src(assetSrcs).pipe(gulp.dest(vars.assets.output))
 })
 
+// Task php-partials
+gulp.task('php-partials',function(){
+  var phpSrcs = [ vars.php.src + '**/*.php' ]
+
+  allSources.php = phpSrcs
+
+  gulp.src(phpSrcs).pipe(gulp.dest(vars.php.output))
+})
+
 // Task: gulp watch
 gulp.task('watch', function () {
   var reportChange = function(event) {
@@ -171,6 +180,7 @@ gulp.task('watch', function () {
   }
   gulp.watch(allSources.sass, ['sass']).on('change',reportChange)
   gulp.watch(allSources.hbs, ['hbs']).on('change',reportChange)
+  gulp.watch(allSources.php, ['php-partials']).on('change',reportChange)
   gulp.watch(allSources.js, ['js']).on('change',reportChange)
   gulp.watch(allSources.assets, ['assets']).on('change',reportChange)
 })
@@ -184,14 +194,12 @@ gulp.task('serve', function () {
   })
 })
 
-// Task
-
 // Task: uneets -- newUneet new uneet files
 // usage: "gulp uneets --make unitName"
 const MAKE_NAME = 'make'
 gulp.task('uneets',function(){
   var force = argv.f
-  var newUneet = { scss: {}, js: {}}
+  var newUneet = { scss: {}, js: {}, php: {} }
   // scss
   newUneet.scss.name = argv[MAKE_NAME] + '.scss'
   newUneet.scss.dest = vars.scss.uneetsFolder + '/'
@@ -208,6 +216,14 @@ gulp.task('uneets',function(){
   if ((!vars.js.ignore) && (( !fs.existsSync(newUneet.js.file) ) || ( force ))) {
     fs.writeFile(newUneet.js.file, newUneet.js.content, null);
   }
+  // php
+  newUneet.php.name = argv[MAKE_NAME] + '.php'
+  newUneet.php.dest = vars.php.uneetsFolder + '/'
+  newUneet.php.file = newUneet.php.dest + newUneet.php.name
+  newUneet.php.content = '.u_' + argv[MAKE_NAME] + ' {\n' + '}'
+  if ((!vars.php.ignore) && (( !fs.existsSync(newUneet.php.file) ) || ( force ))) {
+    fs.writeFile(newUneet.php.file, newUneet.php.content, null);
+  }
 });
 
 // Process EVEYRHTING and then watch.
@@ -216,6 +232,10 @@ var noWatch = []
 if (!vars.hbs.ignore) {
   tasks.push('hbs')
   noWatch.push('hbs')
+}
+if (!vars.php.ignore) {
+  tasks.push('php-partials')
+  noWatch.push('php-partials')
 }
 if (!vars.scss.ignore) {
   tasks.push('sass')
