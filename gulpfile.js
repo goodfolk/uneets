@@ -35,8 +35,12 @@ var renameSass = (vars.scss.config.minify)
     : doNothing
 
 // html / handlebars related packages
-var handlebars = require('gulp-compile-handlebars')
-var hbsData = require('./handlebars.js')
+var handlebars = (!vars.hbs.ignore)
+    ? require('gulp-compile-handlebars')
+    : doNothing
+var hbsData = (!vars.hbs.ignore)
+    ? require('./handlebars.js')
+    : doNothing
 
 // js related packages
 var standard = (vars.js.config.useStandard)
@@ -90,7 +94,7 @@ gulp.task('sass', function () {
                 : ''
     })(vars.scss.config.useNormalize),
     vars.scss.src + 'custom/common/global.scss',
-    vars.scss.src + 'custom/modules/**/*.scss',
+    vars.scss.src + 'custom/uneets/**/*.scss',
     vars.scss.src + 'custom/shame.scss'
   ]
   var libSrcs = [vars.scss.src + 'libs/**/*.css']
@@ -164,6 +168,15 @@ gulp.task('assets', function () {
   gulp.src(assetSrcs).pipe(gulp.dest(vars.assets.output))
 })
 
+// Task php-partials
+gulp.task('php-partials',function(){
+  var phpSrcs = [ vars.php.src + '**/*.php' ]
+
+  allSources.php = phpSrcs
+
+  gulp.src(phpSrcs).pipe(gulp.dest(vars.php.output))
+})
+
 // Task: gulp watch
 gulp.task('watch', function () {
   var reportChange = function(event) {
@@ -171,6 +184,7 @@ gulp.task('watch', function () {
   }
   gulp.watch(allSources.sass, ['sass']).on('change',reportChange)
   gulp.watch(allSources.hbs, ['hbs']).on('change',reportChange)
+  gulp.watch(allSources.php, ['php-partials']).on('change',reportChange)
   gulp.watch(allSources.js, ['js']).on('change',reportChange)
   gulp.watch(allSources.assets, ['assets']).on('change',reportChange)
 })
@@ -184,13 +198,14 @@ gulp.task('serve', function () {
   })
 })
 
-// Task: uneet -- newUneet new uneet files
+// Task: uneets -- newUneet new uneet files
+// usage: "gulp uneets --make unitName"
 const MAKE_NAME = 'make'
 gulp.task('uneets',function(){
   var force = argv.f
-  var newUneet = { scss: {}, js: {}}
+  var newUneet = { scss: {}, js: {}, php: {} }
   // scss
-  newUneet.scss.name = argv[MAKE_NAME] + '.scss'
+  newUneet.scss.name = 'u_' + argv[MAKE_NAME] + '.scss'
   newUneet.scss.dest = vars.scss.uneetsFolder + '/'
   newUneet.scss.file = newUneet.scss.dest + newUneet.scss.name
   newUneet.scss.content = '.u_' + argv[MAKE_NAME] + ' {\n' + '}'
@@ -198,21 +213,49 @@ gulp.task('uneets',function(){
     fs.writeFile(newUneet.scss.file, newUneet.scss.content, null);
   }
   // js
-  newUneet.js.name = argv[MAKE_NAME] + '.js'
+  newUneet.js.name = 'u_' + argv[MAKE_NAME] + '.js'
   newUneet.js.dest = vars.js.uneetsFolder + '/'
   newUneet.js.file = newUneet.js.dest + newUneet.js.name
   newUneet.js.content = '//.u_' + argv[MAKE_NAME] + '\n'
   if ((!vars.js.ignore) && (( !fs.existsSync(newUneet.js.file) ) || ( force ))) {
     fs.writeFile(newUneet.js.file, newUneet.js.content, null);
   }
+  // php
+  newUneet.php.name = 'u_' + argv[MAKE_NAME] + '.php'
+  newUneet.php.dest = vars.php.uneetsFolder + '/'
+  newUneet.php.file = newUneet.php.dest + newUneet.php.name
+  newUneet.php.content = '<?php // u_' + argv[MAKE_NAME] + '\n\n' + '?>'
+  if ((!vars.php.ignore) && (( !fs.existsSync(newUneet.php.file) ) || ( force ))) {
+    fs.writeFile(newUneet.php.file, newUneet.php.content, null);
+  }
 });
 
 // Process EVEYRHTING and then watch.
 var tasks = []
-if (!vars.hbs.ignore) { tasks.push('hbs') }
-if (!vars.scss.ignore) { tasks.push('sass') }
-if (!vars.js.ignore) { tasks.push('js') }
-if (!vars.assets.ignore) { tasks.push('assets') }
-if (vars.server.useServer) { tasks.push('serve') }
+var noWatch = []
+if (!vars.hbs.ignore) {
+  tasks.push('hbs')
+  noWatch.push('hbs')
+}
+if (!vars.php.ignore) {
+  tasks.push('php-partials')
+  noWatch.push('php-partials')
+}
+if (!vars.scss.ignore) {
+  tasks.push('sass')
+  noWatch.push('sass')
+}
+if (!vars.js.ignore) {
+  tasks.push('js')
+  noWatch.push('js')
+}
+if (!vars.assets.ignore) {
+  tasks.push('assets')
+  noWatch.push('assets')
+}
+if (vars.server.useServer) {
+  tasks.push('serve')
+}
 tasks.push('watch')
 gulp.task('default', tasks)
+gulp.task('dist', noWatch)

@@ -28,12 +28,18 @@ var vars = {
       }
     }
   },
+  php: {
+    ignore: true,
+    src: baseSrcFolder + 'php-partials/',
+    uneetsFolder: baseSrcFolder + 'php-partials',
+    output: baseDistFolder + 'php-partials/'
+  },
   scss: {
     ignore: false, // completely turns off sass processing for this project
     src: baseSrcFolder + 'sass/',                // folder where CSS is
     uneetsFolder: baseSrcFolder + 'sass/custom/uneets',
     outputFolder: baseDistFolder + 'css/',       // what folder does CSS and maps go?
-    outputFilename: 'styles',         // do not include the extension
+    outputFilename: 'styles',         // do not include the <extension></extension>
     config: {
       autoprefixerSettings: {
         browsers: [ 'iOS 8', 'iOS 9', 'last 2 ChromeAndroid versions', 'last 2 Android versions', 'last 2 ExplorerMobile versions',
@@ -57,7 +63,7 @@ var vars = {
     config: {
       useBabel: true,
       babelConfig: {
-        presets: ['es2015']
+        presets: ['es2015-ie']
       },
       useStandard: true,
       standardOpts: {
