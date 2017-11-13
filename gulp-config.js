@@ -12,11 +12,11 @@ var vars = {
   baseDist: baseDistFolder,
   baseSrc: baseSrcFolder,
   server: {
-    useServer: true,
+    useServer: false,
     serverPort: 7777
   },
   hbs: {
-    ignore: false, // completely turns off handlebars processing for this project
+    ignore: true, // completely turns off handlebars processing for this project
     src: baseSrcFolder + 'html/',
     outputFolder: baseDistFolder,
     config: {
@@ -29,7 +29,7 @@ var vars = {
     }
   },
   php: {
-    ignore: true,
+    ignore: false,
     src: baseSrcFolder + 'php-partials/',
     uneetsFolder: baseSrcFolder + 'php-partials',
     output: baseDistFolder + 'php-partials/'
@@ -38,8 +38,9 @@ var vars = {
     ignore: false, // completely turns off sass processing for this project
     src: baseSrcFolder + 'sass/',                // folder where CSS is
     uneetsFolder: baseSrcFolder + 'sass/custom/uneets',
+    modulesFolder: baseSrcFolder + 'sass/custom/modules',
     outputFolder: baseDistFolder + 'css/',       // what folder does CSS and maps go?
-    outputFilename: 'styles',         // do not include the <extension></extension>
+    outputFilename: 'styles',         // do not include the extension
     config: {
       autoprefixerSettings: {
         browsers: [ 'iOS 8', 'iOS 9', 'last 2 ChromeAndroid versions', 'last 2 Android versions', 'last 2 ExplorerMobile versions',
@@ -63,13 +64,15 @@ var vars = {
     config: {
       useBabel: true,
       babelConfig: {
-        presets: ['es2015-ie']
+        presets: [['env',{
+          targets: {
+            browsers: [ 'iOS 8', 'iOS 9', 'last 2 ChromeAndroid versions', 'last 2 Android versions', 'last 2 ExplorerMobile versions',
+              'ie 11', 'last 2 Edge versions',
+              'last 2 Chrome versions', 'last 2 Firefox versions', 'last 2 Safari versions'],
+          }
+        }]]
       },
-      useStandard: true,
-      standardOpts: {
-        breakOnError: false,
-        quiet: false
-      },
+      useESLint: true,
       minify: true
     }
   },

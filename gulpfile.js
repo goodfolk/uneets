@@ -16,11 +16,13 @@ var concat = require('gulp-concat')
 var rename = require('gulp-rename')
 var connect = require('gulp-connect')
 var gutil = require('gulp-util')
+var gulpIf = require('gulp-if')
 var exec = require('child_process').exec
 
 // uneet related packages
 var fs = require('fs');
 var argv = require('yargs').argv;
+var makeFiles = require('./gulp-src/uneet-base-files.js')
 
 // sass related packages
 var sass = require('gulp-sass')
@@ -43,8 +45,8 @@ var hbsData = (!vars.hbs.ignore)
     : doNothing
 
 // js related packages
-var standard = (vars.js.config.useStandard)
-    ? require('gulp-standard')
+var eslint = (vars.js.config.useESLint)
+    ? require('gulp-eslint')
     : doNothing
 var babel = (vars.js.config.useBabel)
     ? require('gulp-babel')
@@ -55,7 +57,6 @@ var uglify = (vars.js.config.minify)
     : doNothing
 
 // Task: hbs -- process html / handlebars
-
 gulp.task('hbs', function () {
   var hbsSources = [ vars.hbs.src + '*.html' ]
 
@@ -95,6 +96,7 @@ gulp.task('sass', function () {
     })(vars.scss.config.useNormalize),
     vars.scss.src + 'custom/common/global.scss',
     vars.scss.src + 'custom/uneets/**/*.scss',
+    vars.scss.src + 'custom/modules/**/*.scss',
     vars.scss.src + 'custom/shame.scss'
   ]
   var libSrcs = [vars.scss.src + 'libs/**/*.css']
@@ -127,25 +129,33 @@ gulp.task('sass', function () {
 // Process JS
 gulp.task('js', function () {
   var mapsDir = '.'
-  var customSrc = [vars.js.src + 'custom/**/*.js']
+  var customSrc = [ vars.js.src + 'custom/**/*.js' ]
+  var customSrcFolder = vars.js.src + 'custom/'
   var outputFile = vars.js.outputFilename + '.min.js'
   var destDir = vars.js.outputFolder
-  var libsSrc = [vars.js.src + 'libs/**/*.js']
+  var libsSrc = [vars.js.src + 'libs/**/*.js', 'node_modules/babel-polyfill/dist/polyfill.js']
   var libsOutputFile = 'libs.js'
 
   allSources.js = []
   allSources.js = allSources.js.concat(customSrc, libsSrc)
 
-  exec('standard --fix', function (err, stdout, stderr) {
-    console.log(stdout)
-    console.log(stderr)
-  })
+  isFixed = function (file) {
+    return file.eslint != null && file.eslint.fixed
+  }
+
+  gulp.src(customSrc)
+    .pipe(eslint({fix: true}))
+    .pipe(eslint.format())
+    //.pipe(eslint.failAfterError())
+    .pipe(gulpIf(isFixed, gulp.dest(customSrcFolder)))
 
   gulp.src(libsSrc)
       .pipe(concat(libsOutputFile))
       .pipe(gulp.dest(destDir))
   return gulp.src(customSrc)
-      .pipe(standard())
+      //.pipe(eslint())
+      //.pipe(eslint.format())
+      //.pipe(eslint.failAfterError())
       .pipe(sourcemaps.init())
       .pipe(babel(vars.js.config.babelConfig).on('error', function (e) {
         gutil.log(e)
@@ -153,10 +163,9 @@ gulp.task('js', function () {
       .pipe(concat(outputFile).on('error', function (e) {
         gutil.log(e)
       }))
-      .pipe(uglify())
+      .pipe(uglify({ mangle: false }))
       .pipe(sourcemaps.write(mapsDir))
       .pipe(gulp.dest(destDir))
-      .pipe(standard.reporter('default', vars.js.config.standardOpts))
 })
 
 // Process assets
@@ -203,30 +212,54 @@ gulp.task('serve', function () {
 const MAKE_NAME = 'make'
 gulp.task('uneets',function(){
   var force = argv.f
-  var newUneet = { scss: {}, js: {}, php: {} }
+  var newUneet = { scss: {}, js: {}, php: {}, hbs: {} }
+  var newUneetName = 'u_' + argv[MAKE_NAME];
   // scss
-  newUneet.scss.name = 'u_' + argv[MAKE_NAME] + '.scss'
+  newUneet.scss.name = newUneetName + '.scss'
   newUneet.scss.dest = vars.scss.uneetsFolder + '/'
   newUneet.scss.file = newUneet.scss.dest + newUneet.scss.name
-  newUneet.scss.content = '.u_' + argv[MAKE_NAME] + ' {\n' + '}'
+  newUneet.scss.content = makeFiles.scssBase(newUneetName)
   if ((!vars.scss.ignore) && (( !fs.existsSync(newUneet.scss.file) ) || ( force ))) {
     fs.writeFile(newUneet.scss.file, newUneet.scss.content, null);
   }
   // js
-  newUneet.js.name = 'u_' + argv[MAKE_NAME] + '.js'
+  newUneet.js.name = newUneetName + '.js'
   newUneet.js.dest = vars.js.uneetsFolder + '/'
   newUneet.js.file = newUneet.js.dest + newUneet.js.name
-  newUneet.js.content = '//.u_' + argv[MAKE_NAME] + '\n'
+  newUneet.js.content = makeFiles.jsBase(newUneetName)
   if ((!vars.js.ignore) && (( !fs.existsSync(newUneet.js.file) ) || ( force ))) {
     fs.writeFile(newUneet.js.file, newUneet.js.content, null);
   }
   // php
-  newUneet.php.name = 'u_' + argv[MAKE_NAME] + '.php'
+  newUneet.php.name = newUneetName + '.tpl.php'
   newUneet.php.dest = vars.php.uneetsFolder + '/'
   newUneet.php.file = newUneet.php.dest + newUneet.php.name
-  newUneet.php.content = '<?php // u_' + argv[MAKE_NAME] + '\n\n' + '?>'
+  newUneet.php.content = makeFiles.phpBase(newUneetName)
   if ((!vars.php.ignore) && (( !fs.existsSync(newUneet.php.file) ) || ( force ))) {
     fs.writeFile(newUneet.php.file, newUneet.php.content, null);
+  }
+  // hbs
+  newUneet.hbs.name = newUneetName + '.handlebars'
+  newUneet.hbs.dest = vars.hbs.uneetsFolder + '/'
+  newUneet.hbs.file = newUneet.hbs.dest + newUneet.hbs.name
+  newUneet.hbs.content = makeFiles.hbsBase(newUneetName)
+  if ((!vars.hbs.ignore) && (( !fs.existsSync(newUneet.hbs.file) ) || ( force ))) {
+    fs.writeFile(newUneet.hbs.file, newUneet.hbs.content, null);
+  }
+});
+
+// Task: modules -- new modules creator
+// usage: "gulp modules --make unitName"
+gulp.task('modules',function(){
+  var force = argv.f
+  var newModule = { scss: {}, js: {}, php: {} }
+  // scss
+  newModule.scss.name = 'm_' + argv[MAKE_NAME] + '.scss'
+  newModule.scss.dest = vars.scss.modulesFolder + '/'
+  newModule.scss.file = newModule.scss.dest + newModule.scss.name
+  newModule.scss.content = '.m_' + argv[MAKE_NAME] + ' {\n' + '}'
+  if ((!vars.scss.ignore) && (( !fs.existsSync(newModule.scss.file) ) || ( force ))) {
+    fs.writeFile(newModule.scss.file, newModule.scss.content, null);
   }
 });
 

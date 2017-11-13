@@ -2,6 +2,21 @@
 // Text helper mixins
 // ***************************************************************************
 
+@mixin ff-sans() {
+  //font-family: $font-family-sans;
+  .wf-inactive & {
+    //font-family: "Arial", sans-serif;
+  }
+}
+
+@mixin ff-serif() {
+  //font-family: $font-family-serif;
+  .wf-inactive & {
+    //font-family: "Georgia", serif;
+  }
+}
+
+
 // PX to REM
 // http://hugogiraudel.com/2013/03/18/ultimate-rem-mixin/
 @function parseInt($n) {

@@ -1,6 +1,6 @@
 // ***************************************************************************
 // User agent mixins
-// http://rog.ie/blog/html5-boilerplate-addon
+// https://gist.github.com/yoshuawuyts/8320300
 // ***************************************************************************
 @mixin for-ie9 {
   html[data-useragent*='MSIE 9.0'] & {

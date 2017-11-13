@@ -5,3 +5,7 @@
     clear: both;
   }
 }
+
+@function z-index($key) {
+  @return map-get($z-index, $key);
+}

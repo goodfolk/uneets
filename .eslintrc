@@ -1,0 +1,19 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "extends": "airbnb",
+  "rules": {
+    "semi": [ 2, "never" ],
+    "jsx-a11y/href-no-hash": "off",
+    "jsx-a11y/anchor-is-valid": ["warn", { "aspects": ["invalidHref"] }],
+    "no-unused-vars": ["error", { "varsIgnorePattern": "[U]" }],
+    "no-underscore-dangle": 0,
+    "max-len": [ "error", { "code": 100, "ignoreComments": true, "ignoreUrls": true }]
+    },
+  "globals": {
+    "Uneet": true,
+    "jQuery": true
+  }
+}
