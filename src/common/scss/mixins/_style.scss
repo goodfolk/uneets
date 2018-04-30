@@ -1,3 +1,8 @@
+/* ***************************************************************************
+  _style.mixins.scss: Style related mixins
+*************************************************************************** */
+
+///## Button to anchor
 // turns a button into a link-like thing
 @mixin button-to-anchor(){
   display: inline;
@@ -10,7 +15,7 @@
   text-align: left;
 }
 
-/// Triangle helper mixin
+///## Triangle helper mixin
 /// @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
 /// @param {Color} $color [currentcolor] - Triangle color
 /// @param {Length} $size [1em] - Triangle size

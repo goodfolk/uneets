@@ -1,23 +1,8 @@
-// ***************************************************************************
-// Text helper mixins
-// ***************************************************************************
+/* ***************************************************************************
+  _text.mixins.scss: Text related mixins
+*************************************************************************** */
 
-@mixin ff-sans() {
-  //font-family: $font-family-sans;
-  .wf-inactive & {
-    //font-family: "Arial", sans-serif;
-  }
-}
-
-@mixin ff-serif() {
-  //font-family: $font-family-serif;
-  .wf-inactive & {
-    //font-family: "Georgia", serif;
-  }
-}
-
-
-// PX to REM
+// ## PX to REM
 // http://hugogiraudel.com/2013/03/18/ultimate-rem-mixin/
 @function parseInt($n) {
   @return $n / ($n * 0 + 1);

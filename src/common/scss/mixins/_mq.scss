@@ -1,0 +1,20 @@
+/* ***************************************************************************
+  _mq.mixins.scss: Media query mixins
+  Include any RWD and other media queries
+*************************************************************************** */
+
+//## Media Queries
+// needs the variable list $media-query-breakpoints.
+// usage: `@include for-media-query(desktop-m) { ... }`
+@mixin for-media-query($bp) {
+  @media (min-width: #{map-get($media-query-breakpoints, $bp)} ) {
+    @content;
+  }
+}
+
+//## Media Queries
+@mixin for-print() {
+  @media print {
+    @content;
+  }
+}

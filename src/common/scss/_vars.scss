@@ -1,0 +1,56 @@
+/* ***************************************************************************
+  _vars.scss: Variables file
+  Add all the variables you plan to use on this project.
+*************************************************************************** */
+
+//# Sample Variables (as recommendations)
+
+//## Folders
+$theme-name: 'my-theme';
+$assets-folder: '/wp-content/themes/#{$theme-name}/uneets/dist/assets'; // in Wordpress
+//$assets-folder: '/sites/all/themes/#{$theme-name}/uneets/dist/assets'; // in Drupal
+$imgs-folder: '#{$assets-folder}imgs/';
+
+// ## Sizes 
+$mobile-bleed: 22px;
+$mobile-gutter: 15px;
+$desktop-bleed: 15px;
+$desktop-gutter: 20px;
+$desktop-max-width: 1200px;
+
+// ## Font family definitions
+$font-family-sans: "Helvetica Neue", Arial, sans-serif;
+$font-family-serif: "Georgia", Garamond, serif;
+
+//## Named breakpoints
+$media-query-breakpoints: (
+  mobile-s      : 320px,
+  mobile-m      : 480px,
+  mobile-l      : 620px,
+  tablet-s      : 720px,
+  tablet-m      : 800px,
+  tablet-l      : 940px,
+  desktop-s     : 1024px,
+  desktop-m     : 1100px,
+  desktop-l     : 1300px
+);
+
+//## Named colors
+$color: (
+  black   : #000,     // black
+  white   : #fff,     // white
+  accent1   : #b5ab4d,  
+  accent2   : #fffaaa
+);
+
+//## Named z-index (check the layout mixins for usage)
+$z-index: (
+  tooltip            : 6000,
+  modal              : 5000,
+  navigation         : 2000,
+  stickyheader       : 1000,
+  content            : 500
+);
+
+//## Transition time (to use in all transitions)
+$transTime: 300ms;

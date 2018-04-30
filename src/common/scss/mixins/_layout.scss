@@ -1,0 +1,23 @@
+/* ***************************************************************************
+  _layout.mixins.scss: Any layout related mixins
+  Include any custom grid you use here.
+*************************************************************************** */
+
+//## Clearfix, in case you float anything.
+@mixin clearfix {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+//## Z-index mixin
+// usage: `@include z-index(modal,3);`
+@function z-index($key) {
+  @return map-get($z-index, $key);
+}
+@mixin z-index($key, $add:0) {
+  z-index: #{z-index($key) + $add};
+}
+
