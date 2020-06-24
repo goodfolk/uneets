@@ -1,0 +1,25 @@
+@mixin clearfix() {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin wrapper() {
+  $wrapper-pad: 12px;
+  margin-left: auto;
+  margin-right: auto;
+
+    padding-left: $wrapper-pad;
+    padding-right: $wrapper-pad;
+    @include for-bp(tablet-md) {
+      padding-left: 30px;
+      padding-right: $wrapper-pad;
+    }
+    @include for-bp(desktop-md) {
+      padding-left: 40px;
+      padding-right: $wrapper-pad;
+    }
+
+}

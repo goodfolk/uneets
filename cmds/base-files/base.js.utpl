@@ -1,0 +1,15 @@
+/* ~~name~~ */
+
+import Uneet from '../_base/uneetJS.js'
+
+class ~~name~~ extends Uneet {
+  constructor(de) {
+    super(de)
+    this.init()
+  }
+
+  init() {
+  }
+}
+
+export default ~~name~~

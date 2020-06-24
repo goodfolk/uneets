@@ -1,0 +1,19 @@
+/* UBody */
+body.u_body {
+  margin-top: 0px;
+  > main.main-content {
+    
+  }
+  &.hasOpenOverlay {
+    max-height: 100vh;
+    overflow: hidden;
+  }
+}
+
+body.u_body.u_body__homepage {
+  > main.main-content {
+    @include for-bp(tablet-md) {
+      padding-top: 0px;
+    }
+  }
+}
