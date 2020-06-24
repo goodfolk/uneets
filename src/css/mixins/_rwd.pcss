@@ -1,0 +1,18 @@
+// --------------------------------
+// RESPONSIVE DESIGN MIXIN
+// --------------------------------
+
+@mixin for-bp($bp) {
+  @media (min-width: map-get($media-query-breakpoints, $bp) ) {
+    @content;
+  }
+}
+
+@mixin for-print() {
+  @media print {
+    @content;
+  }
+  // .print & {
+  //   @content;
+  // }
+}
