@@ -83,12 +83,12 @@ class Uneet {
   __parseAttributes() {
     const attrs = this._e.attributes
     Array.from(attrs).forEach(attr => {
-      if (ATTR_PREFIXES.reduce((acc, attrstart)=>{
-        return attr.name.indexOf(attrstart) > -1 || acc
-      },false)) {
-        const objAttrName = attr.name.replace('u-', '')
-        this[objAttrName] = parse(attr.value)
-      }
+      ATTR_PREFIXES.forEach((prefix)=>{
+        if (attr.name.indexOf(prefix) === 0) {
+          const objAttrName = attr.name.replace(prefix, '')
+          this[objAttrName] = parse(attr.value)
+        }
+      })
     })
   }
 
@@ -134,6 +134,13 @@ class Uneet {
     cookie.set(uneetsDebugLevelCookieName, {
       debugLevel: uneetsDefaultDebugLevel
     })
+  }
+
+  static setGlobal(name,value){
+    if (!(typeof window.uneetGlobals === 'object' && window.uneetGlobals !== null)) {
+      window.uneetGlobals = {}
+    }
+    window.uneetGlobals[name] = value
   }
 
   __setDebugLevel(debugLevel = uneetsDefaultDebugLevel) {

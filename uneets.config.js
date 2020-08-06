@@ -16,8 +16,8 @@ module.exports = {
   css: {
     src: `${srcPath}/css`,
     entryFilename: 'main.pcss',
-    dest: `./../`,
-    outputFilename: 'style.css'
+    dest: `${destPath}/css`,
+    outputFilename: 'main.css'
   },
   js: {
     src: `${srcPath}/js`,
@@ -25,9 +25,12 @@ module.exports = {
   },
   templates: {
     dest: `${destPath}/templates`,
-    useTwig: false
+    useTwig: true
   },
   trash: {
     dest: `${srcPath}/../.uneets-trash`
+  },
+  livereload: {
+    enable: true
   }
 }

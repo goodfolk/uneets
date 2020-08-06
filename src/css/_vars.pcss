@@ -5,7 +5,7 @@
 // to be used in conjunction with '@mixin for-breakpoint(n)' found in sass/custom/mixins/_responsive.scss
 // ------------------------------------------------
 
-$media-query-breakpoints: (
+$bps: (
   mobile-xs: 320px,
   mobile-sm: 375px,
   mobile-md: 480px,
@@ -21,6 +21,15 @@ $media-query-breakpoints: (
 );
 
 // ------------------------------------------------
+// Measures
+// ------------------------------------------------
+
+$mobile-bleed: 16px;
+$tablet-bleed: 20px;
+$desktop-bleed: 25px;
+$desktop-max-width: 1100px;
+
+// ------------------------------------------------
 // Z-indexes
 // ------------------------------------------------
 
@@ -33,13 +42,31 @@ $z-index: (
 );
 
 // ------------------------------------------------
-// Folders
+// Font Families
 // ------------------------------------------------
 
-$assetsFolder: /content/themes/cfc-theme/uneets/dist/assets;
-$webfontsFolder: $assetsFolder/webfonts;
-$imgsFolder: $assetsFolder;
-$svgMap: $assetsFolder/stack/svg/sprite.stack.svg;
+$ffmain: 'mr-eaves-xl-modern';
+$ffnarrow: 'mr-eaves-xl-modern-narrow';
+
+// ------------------------------------------------
+// Font Sizes
+// ------------------------------------------------
+
+$fzs: (
+  2xs:  7.111px,  // modular scale
+  xs:   10.667px, // modular scale
+  s:    12px,  // modular scale
+  base: 16px,  // modular scale
+  demi: 20px,  // modular scale
+  reg:  22px,  // modular scale
+  m:    28px,  // modular scale
+  l:    34px,  // modular scale
+  xl:   48px,
+  2xl:  54px,  // modular scale
+  3xl:  63px,
+  4xl:  68px,
+  5xl:  81px  // modular scale
+);
 
 // ------------------------------------------------
 // Colors
@@ -48,20 +75,10 @@ $svgMap: $assetsFolder/stack/svg/sprite.stack.svg;
 $colors: (
   black:  #000,
   white:  #fff,
-  text:   #4E4E4E,
-  orange: #F4744E,
-  red:    #D36342,
-  blue:   #2A98EF,
+  text:   #333333,
+  base:   #555656,
+  highlight1: #F0DE33
 );
-
-// ------------------------------------------------
-// Measures
-// ------------------------------------------------
-
-$mobile-bleed: 0px;
-$tablet-bleed: 0px;
-$desktop-bleed: 0px;
-$desktop-max-width: 1440px;
 
 // ------------------------------------------------
 // Time
@@ -70,5 +87,18 @@ $desktop-max-width: 1440px;
 $transTime: 150ms;
 
 // ------------------------------------------------
+// Folders
+// ------------------------------------------------
+
+$assetsFolder: /themes/novomer/uneets/dist/assets;
+// $webfontsFolder: $assetsFolder/webfonts;
+$imgsFolder: $assetsFolder/images;
+$svgMap: $assetsFolder/stack/svg/sprite.stack.svg;
+
+// ------------------------------------------------
 // Cross uneet variables
 // ------------------------------------------------
+
+$navBreakpoint: tablet-sm;
+$navWidth: 40vw;
+$navWidth_tablet-sm: 260px;

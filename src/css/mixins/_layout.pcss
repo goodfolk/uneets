@@ -6,20 +6,28 @@
   }
 }
 
-@mixin wrapper() {
-  $wrapper-pad: 12px;
+@mixin base-wrapper() {
   margin-left: auto;
   margin-right: auto;
+  max-width: $desktop-max-width;
+}
 
-    padding-left: $wrapper-pad;
-    padding-right: $wrapper-pad;
-    @include for-bp(tablet-md) {
-      padding-left: 30px;
-      padding-right: $wrapper-pad;
-    }
-    @include for-bp(desktop-md) {
-      padding-left: 40px;
-      padding-right: $wrapper-pad;
-    }
+@mixin wrapper() {
+  padding-left: 0px;
+  padding-right: 0px;
+  @include base-wrapper();
+}
 
+@mixin wrapper-padded() {
+  @include base-wrapper();
+  padding-left: $mobile-bleed;
+  padding-right: $mobile-bleed;
+  @include for-bp(tablet-sm) {
+    padding-left: $tablet-bleed;
+    padding-right: $tablet-bleed;
+  }
+  @include for-bp(desktop-sm) {
+    padding-left: $desktop-bleed;
+    padding-right: $desktop-bleed;
+  }
 }

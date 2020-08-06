@@ -3,7 +3,7 @@
 // --------------------------------
 
 @mixin for-bp($bp) {
-  @media (min-width: map-get($media-query-breakpoints, $bp) ) {
+  @media (min-width: map-get($bps, $bp) ) {
     @content;
   }
 }

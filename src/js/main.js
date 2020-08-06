@@ -22,5 +22,3 @@ document.addEventListener('DOMContentLoaded', function() {
   uneetPolyfills()
   uneetAutoInit()
 })
-
-console.log('caca');

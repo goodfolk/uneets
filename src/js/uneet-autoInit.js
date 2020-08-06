@@ -23,7 +23,11 @@ const initWindowObj = () => {
 
 const uneetsAutoInit = () => {
   initWindowObj();
-  const query = `[class^='${CLASS_PREFIX}']${ATTR_PREFIXES.reduce((acc,prefix)=>`${acc}:not([${prefix}${NOINIT_SUFFIX}])`,'')}`
+  // query for: 
+  // - starts with u_ (prefix) but
+  // - does not contain any of the attr prefixes (u-, data-u-, u_, data-u_)
+  // - does not have "--" or "__" in the class name
+  const query = `[class^='${CLASS_PREFIX}']${ATTR_PREFIXES.reduce((acc,prefix)=>`${acc}:not([${prefix}${NOINIT_SUFFIX}])`,'')}:not([class*='--']):not([class*='__'])`
   console.debug(`Querying for autoinit as per: ${query}`)
   const autoInitDOMElements = document.querySelectorAll(query);
   autoInitDOMElements.forEach(domElement=>{

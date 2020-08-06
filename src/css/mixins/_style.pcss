@@ -10,6 +10,57 @@
   text-align: left;
 }
 
+@mixin wysiwyg-styles() {
+  h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+  }
+  h2 {
+    font-size: map-get($fzs, 2xl);
+  }
+  h3 {
+    font-size: map-get($fzs, xl);
+  }
+  h4 {
+    font-size: map-get($fzs, l);
+  }
+  h5 {
+    font-size: map-get($fzs, m);
+  }
+  h6 {
+    font-size: map-get($fzs, base);
+  }
+  p {
+    display: inline-block;
+    margin-bottom: 20px;
+    line-height: 1.4em;
+  }
+  ul, ol {
+    list-style-position: inside;
+    display: block;
+    margin-bottom: 20px;
+    ul, ol {
+      margin-bottom: 0;
+      padding-left: 10px;
+    }
+    ul {
+      list-style-type: circle;
+    }
+    ol {
+      list-style-type: decimal;
+    }
+  }
+  ul {
+    list-style-type: disc;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  img {
+    max-width: 100%;
+  }
+}
+
 // /// Triangle helper mixin
 // /// @param {Direction} $direction - Triangle direction, either `top`, `right`, `bottom` or `left`
 // /// @param {Color} $color [currentcolor] - Triangle color

@@ -4,8 +4,9 @@ const sourcemaps = require('gulp-sourcemaps')
 const rename = require('gulp-rename')
 const webpack = require('webpack')
 const webpackConfig = require('./webpack.config.js')
+const livereload = require('gulp-livereload')
+const notify = require('gulp-notify')
 const svgSprite = require('gulp-svg-sprite')
-// post css
 const postcss = require('gulp-postcss');
 const postcssComment = require('postcss-comment');
 const postcssImport = require('postcss-import');
@@ -21,11 +22,23 @@ const postcssMapGet = require('postcss-map-get');
 
 const cfg = require('./uneets.config')
 
+// livereload 
+
+const liveReloadStart = () => {
+  if (cfg.livereload && cfg.livereload.enable) {
+    livereload({
+      start: true,
+      port: 35729
+    })
+  }
+}
+
 // ASSETS copy
 const assetsSrc = `${cfg.assets.src}/**/*`
 const assetsDest = `${cfg.assets.dest}`
 const processAssets = () => {
   return gulp.src([assetsSrc]).pipe(gulp.dest(assetsDest))
+  .pipe(livereload())
 }
 
 const watchAssets = () => {
@@ -50,6 +63,7 @@ const processSVGs = () => {
       })
     ) // Activate Sass output (with default options) // Activate the «symbol» mode
     .pipe(gulp.dest(svgDest))
+    .pipe(livereload())
 }
 
 const watchSVGs = () => {
@@ -65,6 +79,7 @@ const processTemplates = () => {
     .src([uneetsTplSrc])
     .pipe(flatten())
     .pipe(gulp.dest(tplDest))
+    .pipe(livereload())
 }
 
 const watchTemplates = () => {
@@ -72,7 +87,7 @@ const watchTemplates = () => {
 }
 
 // CSS related tasks
-const processSass = () => {
+const processCSS = () => {
   return gulp
     .src(`${cfg.css.src}/${cfg.css.entryFilename}`)
     .pipe(sourcemaps.init())
@@ -85,7 +100,7 @@ const processSass = () => {
       postcssColorMod(),
       postcssPXtoRem({
         selectorBlackList: ['html','body'],
-        rootValue: 16,
+        rootValue: 10,
         unitPrecision: 5,
         propList: ['font', 'font-size', 'line-height', 'letter-spacing'],
         replace: true,
@@ -98,9 +113,15 @@ const processSass = () => {
           normalizeUrl: false
         }]
       }),
-      postcssReporter()
+      postcssReporter({
+        throwError: true
+      })
     ],{
       parser: postcssComment
+    }))
+    .on('error', notify.onError({
+      message: "You made a boo boo.",
+      title: "Error in CSS!"
     }))
     .pipe(
       rename(path => {
@@ -111,12 +132,13 @@ const processSass = () => {
     )
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(`${cfg.css.dest}`))
+    .pipe(livereload())
 }
 
 const watchSass = () => {
   gulp.watch(
     [`${cfg.css.src}/**/*.pcss`, `${cfg.uneets.src}/**/*.pcss`],
-    processSass
+    processCSS
   )
 }
 
@@ -126,26 +148,37 @@ function webpackScripts() {
   webpackConfig.mode = 'development'
   return new Promise(resolve =>
     webpack(webpackConfig, (err, stats) => {
-      if (err) console.log('Webpack', err)
-
-      console.log(
-        stats.toString({
-          /* stats options */
-        })
-      )
-
+      if (stats.compilation.errors.length > 0) {
+        console.error('Webpack', stats.compilation.errors[0])
+        notify.onError({
+          message: "You made a boo boo.",
+          title: "Error in JS!"
+        })(stats.compilation.errors[0])
+      } else {
+        console.log(
+          stats.toString({
+            /* stats options */
+          })
+        )
+      }
       resolve()
     })
   )
 }
 
-const processJS = gulp.series(webpackScripts)
+const livereloadJS = (done) => {
+  livereload()
+  done()
+}
+
+const processJS = gulp.series(webpackScripts,livereloadJS)
 const watchJS = () => {
   gulp.watch([`${cfg.js.src}/**/*.js`, `${cfg.uneets.src}/**/*.js`], processJS)
 }
 
 // Watch
 const watchTask = gulp.parallel(
+  liveReloadStart,
   watchSass,
   watchJS,
   watchAssets,
@@ -155,7 +188,7 @@ const watchTask = gulp.parallel(
 watchTask.description = 'watch for changes to all source'
 // Process
 const processTask = gulp.parallel(
-  processSass,
+  processCSS,
   processJS,
   processAssets,
   processSVGs,
