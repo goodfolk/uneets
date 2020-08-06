@@ -30,7 +30,7 @@
     "js-cookie": "^2.2.0",
     "kebab-case": "^1.0.0",
     "masonry-layout": "^4.2.2",
-    "minimist": "^1.2.0",
+    "minimist": "^1.2.3",
     "modernizr": "^3.9.1",
     "pascalcase": "^1.0.0",
     "pnp-webpack-plugin": "^1.6.4",
